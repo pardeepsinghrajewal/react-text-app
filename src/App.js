@@ -1,24 +1,68 @@
-import logo from './logo.svg';
-import './App.css';
+import Navbar from "./components/Navbar";
+import Textbox from "./components/Textbox";
+import Simpletext from "./components/Simpletext";
+import About from "./components/About";
+import { useState } from 'react'
+import Alert from "./components/Alert";
+import React, { Component }  from 'react';
 
-function App() {
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+
+function App() 
+{
+  const [mode, updateMode] = useState('light');
+  const [alert, updateAlert] = useState(null);
+
+  const showAlert = (message,type)=>{
+    updateAlert({
+      message:message,
+      type:type
+    });
+    setTimeout(() => 
+    {  
+      updateAlert(null); 
+    }, 1500);
+  }
+
+  const toggleMode = ()=>
+  {
+    if(mode == 'light')
+    {
+      updateMode('dark');
+      document.body.style.backgroundColor = '#343a40';
+      showAlert('dark mode is enabled','success');
+      document.title = 'Dark mode is enabled';
+      setInterval(() => {
+        document.title = 'Test';
+      }, 1000);
+      setInterval(() => {
+        document.title = 'Test2';
+      }, 1500);
+    }
+    else
+    {
+      updateMode('light');
+      document.body.style.backgroundColor = 'white';
+      showAlert('Light mode is enabled','success');
+      document.title = 'Light mode is enabled';
+    }
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <BrowserRouter>
+        <Navbar mode={mode} toggleMode={toggleMode} />
+        <Alert alert={alert}/>
+        <div className="container">
+          <Routes>
+            <Route exact path="/" element={<Textbox mode={mode} showAlert={showAlert}/>}/>
+            <Route exact path="/about" element={<About />} />
+            <Route exact path="/simpletext" element={<Simpletext />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </>
   );
 }
 
